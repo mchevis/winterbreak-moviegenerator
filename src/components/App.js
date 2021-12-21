@@ -20,7 +20,11 @@ class App extends React.Component {
 
   async addMovie() {
     const { data: addedMovie } = await axios.post("/api/movies");
-    this.setState({ movies: [...this.state.movies, addedMovie] });
+    this.setState({
+      movies: [...this.state.movies, addedMovie].sort(
+        (a, b) => b.rating - a.rating
+      ),
+    });
   }
 
   async deleteMovie(movieId) {
@@ -36,9 +40,9 @@ class App extends React.Component {
     });
     //TODO: BUG - STATE DOESN'T UPDATE ON FIRST CLICK, JUST SUBSEQUENT ONES
     this.setState({
-      movies: this.state.movies.map((mov) =>
-        mov.id === updatedMovie.id ? updatedMovie : mov
-      ),
+      movies: this.state.movies
+        .map((mov) => (mov.id === updatedMovie.id ? updatedMovie : mov))
+        .sort((a, b) => b.rating - a.rating),
     });
   }
 

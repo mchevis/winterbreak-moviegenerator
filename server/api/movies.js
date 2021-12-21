@@ -4,7 +4,14 @@ const { Movie } = require("../db").models;
 // GET /api/movies
 router.get("/", async (req, res, next) => {
   try {
-    res.send(await Movie.findAll());
+    res.send(
+      await Movie.findAll({
+        order: [
+          ["rating", "DESC"],
+          ["name", "ASC"],
+        ],
+      })
+    );
   } catch (error) {
     next(error);
   }
@@ -33,8 +40,9 @@ router.delete("/:id", async (req, res, next) => {
 // PUT /api/movies/:id
 router.put("/:id", async (req, res, next) => {
   try {
-    const movie = await Movie.findByPk(req.params.id);
+    let movie = await Movie.findByPk(req.params.id);
     await movie.updateRating(req.body.method);
+    movie = await Movie.findByPk(req.params.id);
     res.send(movie);
   } catch (ex) {
     next(ex);
